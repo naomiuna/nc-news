@@ -1,3 +1,4 @@
+const { owners, shops, treasures } = require('../data');
 const {
   topicData,
   articleData,
