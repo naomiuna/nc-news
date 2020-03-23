@@ -11,7 +11,8 @@
     "migrate-make": "knex migrate:make",
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
-    "find-logs": "grep -R --line-number console.log ./ --exclude-dir node_modules"
+    "find-logs": "grep -R --line-number console.log ./ --exclude-dir node_modules",
+    "dev": "nodemon listen.js"
   },
   "repository": {
     "type": "git",
