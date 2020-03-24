@@ -5,10 +5,12 @@ const request = require('supertest');
 const { expect } = require('chai');
 const connection = require('../db/connection')
 
-beforeEach(() => connection.seed.run());
-after(() => connection.destroy());
 
 describe('/api', () => {
+
+  beforeEach(() => connection.seed.run());
+  after(() => connection.destroy());
+
   it('returns status code 404 for all incorrect paths', () => {
     return request(app)
       .get('/invalid_path')
@@ -147,6 +149,42 @@ describe('/api', () => {
             .expect(400)
             .then(({body:{msg}}) => {
             expect(msg).to.equal('bad request')
+          })
+        })
+      })
+      describe.only('PATCH', () => {
+        it('Status:200 - updates and returns article for given id - positive numbers', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 5 })
+            .expect(200)
+            .then(({body:{article}}) => {
+              expect(article).to.eql({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'I find this existence challenging',
+              created_at: '2018-11-15T12:21:54.171Z',
+              votes: 105
+            });
+          })
+        })
+        it('Status:200 - updates and returns article for given id - negative numbers', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: -5 })
+            .expect(200)
+            .then(({body:{article}}) => {
+              expect(article).to.eql({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              topic: 'mitch',
+              author: 'butter_bridge',
+              body: 'I find this existence challenging',
+              created_at: '2018-11-15T12:21:54.171Z',
+              votes: 95
+            });
           })
         })
       })

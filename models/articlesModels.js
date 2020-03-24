@@ -8,7 +8,6 @@ exports.fetchArticleById = (article_id) => {
     .count({ comment_count: 'comment_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
-    .join('users', 'articles.author', '=', 'users.username')
     .then(([article]) => {
       if (!article) {
         return Promise.reject({
@@ -19,4 +18,12 @@ exports.fetchArticleById = (article_id) => {
       return article;
   })
 }
-//need to join user?
+
+exports.updateArticleById = (id, voteNum) => {
+  return connection
+    .from('articles')
+    .where(id)
+    .increment('votes', voteNum)
+    .returning('*')
+    .then(([article]) => article)
+}
