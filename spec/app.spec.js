@@ -18,6 +18,27 @@ describe('/api', () => {
       });
   });
   describe('/topics', () => {
-
+    describe('GET', () => {
+      it('Status:200 - respnds with an array of topics', () => {
+        return request(app)
+          .get('/api/topics')
+          .expect(200)
+          .then(({ body: { topics } }) => {
+            expect(topics).to.be.an('array')
+            expect(topics).to.have.lengthOf(3)
+        })
+      })
+      it('Status:200 - topics in result array contain correct keys', () => {
+        return request(app)
+          .get('/api/topics')
+          .expect(200)
+          .then(({ body: { topics } }) => {
+            topics.forEach(topic => {
+              expect(topic).to.contain.keys('description', 'slug')
+            })
+          
+        })
+      })
+    })
   })
 })
