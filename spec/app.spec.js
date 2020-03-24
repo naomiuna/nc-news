@@ -40,5 +40,20 @@ describe('/api', () => {
         })
       })
     })
+    describe('INVALID METHODS', () => {
+      it('Status:405 for an invalid method', () => {
+        
+        const methods = ['post', 'patch', 'put', 'delete'];
+        const promises = methods.map(method => {
+          return request(app)
+          [method]('/api/topics')
+            .expect(405)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('method not allowed')
+          })
+        })
+        return Promise.all(promises)
+      })
+    })
   })
 })
