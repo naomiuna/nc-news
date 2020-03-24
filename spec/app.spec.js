@@ -97,4 +97,43 @@ describe('/api', () => {
         });
     })
   })
+  describe('/articles', () => {
+    describe('/:article_id', () => {
+      describe('GET', () => {
+        it('Status:200 - returns article object with required keys', () => {
+          return request(app)
+            .get('/api/articles/3')
+            .expect(200)
+            .then(({body:{article}}) => {
+              expect(article).to.contain.keys(
+                'author',
+                'title',
+                'article_id',
+                'body',
+                'topic',
+                'created_at',
+                'votes',
+              'comment_count')
+          })
+        })
+        it('Status:200 - returns article object with correct values', () => {
+          return request(app)
+            .get('/api/articles/5')
+            .expect(200)
+            .then(({body:{article}}) => {
+              expect(article).to.eql({
+                article_id: 5,
+                title: 'UNCOVERED: catspiracy to bring down democracy',
+                topic: 'cats',
+                author: 'rogersop',
+                body: 'Bastet walks amongst us, and the cats are taking arms!',
+                created_at: '2002-11-19T12:21:54.171Z',
+                votes: 0,
+                comment_count: '2'
+              });
+          })
+        })  
+      })
+    })
+  })
 })
