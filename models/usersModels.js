@@ -5,5 +5,13 @@ exports.fetchUserById = (username) => {
     .select('*')
     .from('users')
     .where('username', '=', username)
-  .then(([user])=> user)
+    .then(([user]) => {
+      if (!user) {
+        return Promise.reject({
+          status: 404,
+          msg: 'username not found'
+      })
+      }
+      return user;
+  })
 }

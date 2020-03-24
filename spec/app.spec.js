@@ -57,7 +57,7 @@ describe('/api', () => {
     })
   })
   describe('/users', () => {
-    describe('/:user_id', () => {
+    describe('/:username', () => {
       describe('GET', () => {
         it('Status:200 - returns correct user object', () => {
           return request(app)
@@ -72,7 +72,29 @@ describe('/api', () => {
               });
             });
         })
+        it('Status:404 - with message username not found, if passed a non existent id', () => {
+          return request(app)
+            .get('/api/users/nonexistent_user')
+            .expect(404)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('username not found')
+          })
+        })
       })
+        describe('INVALID METHODS', () => {
+          it('Status:405 for an invalid method', () => {
+            const methods = ['post', 'patch', 'put', 'delete'];
+            const promises = methods.map(method => {
+              return request(app)
+                [method]('/api/users/icellusedkars')
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('method not allowed');
+                });
+            });
+            return Promise.all(promises);
+          });
+        });
     })
   })
 })
