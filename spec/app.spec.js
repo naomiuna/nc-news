@@ -5,10 +5,10 @@ const request = require('supertest');
 const { expect } = require('chai');
 const connection = require('../db/connection')
 
+beforeEach(() => connection.seed.run());
+after(() => connection.destroy());
 
 describe('/api', () => {
-  beforeEach(() => connection.seed.run());
-  after(() => connection.destroy());
   it('returns status code 404 for all incorrect paths', () => {
     return request(app)
       .get('/invalid_path')
@@ -53,6 +53,25 @@ describe('/api', () => {
           })
         })
         return Promise.all(promises)
+      })
+    })
+  })
+  describe('/users', () => {
+    describe('/:user_id', () => {
+      describe('GET', () => {
+        it('Status:200 - returns correct user object', () => {
+          return request(app)
+            .get('/api/users/butter_bridge')
+            .expect(200)
+            .then(({ body: { user } }) => {
+              expect(user).to.eql({
+                username: 'butter_bridge',
+                name: 'jonny',
+                avatar_url:
+                  'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+              });
+            });
+        })
       })
     })
   })

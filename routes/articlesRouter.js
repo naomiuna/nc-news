@@ -1,4 +1,4 @@
 const articlesRouter = require('express').Router();
-const {} = require('../controllers/articlesController')
+const {} = require('../controllers/articlesControllers')
 
 module.exports = articlesRouter;

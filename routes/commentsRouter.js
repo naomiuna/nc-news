@@ -1,4 +1,4 @@
 const commentsRouter = require('express').Router();
-const {} = require('../controllers/commentsController');
+const {} = require('../controllers/commentsControllers');
 
 module.exports = commentsRouter;
