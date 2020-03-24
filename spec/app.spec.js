@@ -133,7 +133,24 @@ describe('/api', () => {
               });
           })
         })  
+        it('Status:404 - with message article not found if passed valid but non-existent id', () => {
+          return request(app)
+            .get('/api/articles/47')
+            .expect(404)
+            .then(({body:{msg}}) => {
+              expect(msg).to.equal('article not found');
+          })
+        })
+        it('Status:400 - with message bad request if passed an invalid id', () => {
+          return request(app)
+            .get('/api/articles/not_an_ID')
+            .expect(400)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('bad request')
+          })
+        })
       })
+      //invalid methods POST/PUT/DELETE - after PATCH tests
     })
   })
 })

@@ -9,6 +9,14 @@ exports.fetchArticleById = (article_id) => {
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('articles.article_id')
     .join('users', 'articles.author', '=', 'users.username')
-  .then(([article]) => article)
+    .then(([article]) => {
+      if (!article) {
+        return Promise.reject({
+          status: 404,
+          msg:'article not found'
+        })
+      }
+      return article;
+  })
 }
 //need to join user?
