@@ -5,11 +5,19 @@ const request = require('supertest');
 const { expect } = require('chai');
 const connection = require('../db/connection')
 
-after(() => connection.destroy());
 
 describe('/api', () => {
-  //test for 404 - all incorrect paths
+  beforeEach(() => connection.seed.run());
+  after(() => connection.destroy());
+  it('returns status code 404 for all incorrect paths', () => {
+    return request(app)
+      .get('/invalid_path')
+      .expect(404)
+      .then(result => {
+        expect(result.body).to.eql({ msg: 'path not found' });
+      });
+  });
   describe('/topics', () => {
-    
+
   })
 })
