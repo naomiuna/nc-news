@@ -418,16 +418,6 @@ describe('/api', () => {
                 expect(msg).to.equal('article not found');
               });
           })
-
-          //KNEX IGNORES INVALID DIRECTION? - ADD IF STATEMENT TO CONNTROLLER?
-          // it('Status:400 when passed invalid order query', () => {
-          //   return request(app)
-          //     .get('/api/articles/1/comments?order=bananas')
-          //     .expect(400)
-          //     .then(({ body: { msg } }) => {
-          //       expect(msg).to.equal('bad request');
-          //     });
-          // });
         })
         describe('INVALID METHODS', () => {
           it('Status:405 for an invalid method', () => {
@@ -445,5 +435,89 @@ describe('/api', () => {
         });
       });
     })
+    describe.only('GET', () => {
+      it('Status:200 - returns an array of articles', () => {
+        
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.an('array')
+          expect(articles).to.have.lengthOf(12)
+        })
+      })
+      it('Status:200 - articles in result array contain right keys', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            articles.forEach(article => {
+              expect(article).to.contain.keys(
+                'author',
+                'title',
+                'article_id',
+                'topic',
+                'created_at',
+                'votes'
+              );
+            });
+          });
+      });
+      it('Status:200 - Default sort criteria is created_at and order descending', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.descendingBy('created_at');
+          });
+      });
+      it('Status:200 - articles have comment_count property with correct value', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body: { articles :[article] } }) => {
+            expect(article.comment_count).to.equal('13');
+          });
+      });
+      it('Status:200 - sorts by given column if given a query', () => {
+        return request(app)
+          .get('/api/articles?sort_by=title')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.descendingBy('title');
+          });
+      });
+      it('Status:200 - sorts by ascending order if added as query', () => {
+        return request(app)
+          .get('/api/articles?order=asc')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.ascendingBy('created_at');
+          });
+      });
+      it('Status:200: returns only relevant articles if passed an author query', () => {
+        return request(app)
+          .get('/api/articles?author=icellusedkars')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.have.lengthOf(6);
+            articles.forEach(article => {
+              expect(article.author).to.equal('icellusedkars');
+            });
+          });
+      });
+      it('Status:200: returns only relevant articles if passed a topic query', () => {
+        return request(app)
+          .get('/api/articles?topic=mitch')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.have.lengthOf(11);
+            articles.forEach(article => {
+              expect(article.topic).to.equal('mitch');
+            });
+          });
+      });
+    })
+    //INVALID METHODS - PUT,PATCH,POST,DELETE
   })
 })
