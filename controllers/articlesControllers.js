@@ -10,8 +10,12 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.patchArticleById = (req, res, next) => {
+  if (Object.keys(req.body).length > 1) {
+    return next({ status: 400, msg: 'bad request' });
+  }
+  const { article_id } = req.params;
   const { inc_votes } = req.body;
-  updateArticleById(req.params, inc_votes)
+  updateArticleById(article_id, inc_votes)
     .then(article => {
     res.status(200).send({article})
     })

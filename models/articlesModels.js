@@ -19,11 +19,18 @@ exports.fetchArticleById = (article_id) => {
   })
 }
 
-exports.updateArticleById = (id, voteNum) => {
-  return connection
-    .from('articles')
-    .where(id)
-    .increment('votes', voteNum)
+exports.updateArticleById = (article_id, votes) => {
+  return connection('articles')
+    .where({article_id})
+    .increment({votes})
     .returning('*')
-    .then(([article]) => article)
+    .then(([article]) => {
+      if (!article) {
+        return Promise.reject({
+          status: 404,
+          msg: 'article not found'
+        })
+      }
+      return article;
+    })
 }

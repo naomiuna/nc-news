@@ -152,22 +152,14 @@ describe('/api', () => {
           })
         })
       })
-      describe.only('PATCH', () => {
+      describe('PATCH', () => {
         it('Status:200 - updates and returns article for given id - positive numbers', () => {
           return request(app)
             .patch('/api/articles/1')
             .send({ inc_votes: 5 })
             .expect(200)
             .then(({body:{article}}) => {
-              expect(article).to.eql({
-              article_id: 1,
-              title: 'Living in the shadow of a great man',
-              topic: 'mitch',
-              author: 'butter_bridge',
-              body: 'I find this existence challenging',
-              created_at: '2018-11-15T12:21:54.171Z',
-              votes: 105
-            });
+              expect(article.votes).to.equal(105);
           })
         })
         it('Status:200 - updates and returns article for given id - negative numbers', () => {
@@ -176,19 +168,69 @@ describe('/api', () => {
             .send({ inc_votes: -5 })
             .expect(200)
             .then(({body:{article}}) => {
-              expect(article).to.eql({
-              article_id: 1,
-              title: 'Living in the shadow of a great man',
-              topic: 'mitch',
-              author: 'butter_bridge',
-              body: 'I find this existence challenging',
-              created_at: '2018-11-15T12:21:54.171Z',
-              votes: 95
-            });
+              expect(article.votes).to.equal(95);
           })
         })
+        it('Status:404 - message article not found for valid but non-existent article_id', () => {
+          return request(app)
+            .patch('/api/articles/99')
+            .send({ inc_votes: -5 })
+            .expect(404)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('article not found')
+          })
+        })
+        it('Status:400 - with message bad request if passed an invalid id', () => {
+          return request(app)
+            .patch('/api/articles/not_an_ID')
+            .send({inc_votes: -5})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('Status:400 -  with message bad request if no inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/articles/9')
+            .send({})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        })
+        it('Status:400 -  with message bad request if invalid inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/articles/9')
+            .send({ inc_votes: 'cat'})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        })
+        it('Status:400 -  with message bad request if passed additional properties on body', () => {
+          return request(app)
+            .patch('/api/articles/9')
+            .send({ inc_votes: 5, name:'naomi'})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        })
       })
-      //invalid methods POST/PUT/DELETE - after PATCH tests
+      describe('INVALID METHODS', () => {
+        it('Status:405 for an invalid method', () => {
+          const methods = ['post', 'put', 'delete'];
+          const promises = methods.map(method => {
+            return request(app)
+              [method]('/api/articles/1')
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('method not allowed');
+              });
+          });
+          return Promise.all(promises);
+        });
+      });
     })
   })
 })
