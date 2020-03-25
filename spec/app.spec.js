@@ -231,6 +231,44 @@ describe('/api', () => {
           return Promise.all(promises);
         });
       });
+      describe('/comments', () => {
+        describe.only('POST', () => {
+          it('Status:201 - creates and returns new comment with correct keys', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({
+                username: 'rogersop',
+                body: 'a comment'
+              })
+              .expect(201)
+              .then(({body:{comment}}) => {
+                expect(comment).to.have.keys(
+                  'comment_id',
+                  'body',
+                  'article_id',
+                  'author',
+                  'votes',
+                  'created_at'
+                );
+              });
+          })
+          it('Status:201 - creates and returns new comment with correct values', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({
+                username: 'rogersop',
+                body: 'a comment'
+              })
+              .expect(201)
+              .then(({body:{comment}}) => {
+                expect(comment.author, comment.body).to.equal(
+                  'rogersop',
+                  'a comment'
+                );
+              });
+          })
+        })
+      });
     })
   })
 })
