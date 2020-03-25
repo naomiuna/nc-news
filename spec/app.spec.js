@@ -429,7 +429,20 @@ describe('/api', () => {
           //     });
           // });
         })
-        //INVALID METHODS - PUT, PATCH, DELETE
+        describe('INVALID METHODS', () => {
+          it('Status:405 for an invalid method', () => {
+            const methods = ['patch', 'put', 'delete'];
+            const promises = methods.map(method => {
+              return request(app)
+              [method]('/api/articles/1/comments')
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('method not allowed');
+                });
+            });
+            return Promise.all(promises);
+          });
+        });
       });
     })
   })
