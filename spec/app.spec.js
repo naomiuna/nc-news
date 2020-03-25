@@ -2,7 +2,10 @@ process.env.NODE_ENV = 'test';
 
 const app = require('../app');
 const request = require('supertest');
-const { expect } = require('chai');
+const chai = require('chai');
+const chaiSorted = require('chai-sorted');
+chai.use(chaiSorted);
+const { expect } = chai;
 const connection = require('../db/connection')
 
 
@@ -279,59 +282,154 @@ describe('/api', () => {
                 expect(msg).to.equal('unprocessable entity');
               });
           });
-            it('Status:400 - with message bad request if passed an invalid id', () => {
-              return request(app)
-                .post('/api/articles/not_an_ID/comments')
-                .send({
-                  username: 'rogersop',
-                  body: 'a comment'
-                })
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('bad request');
-                });
-            });
-            it('Status:400 -  with message bad request if no body', () => {
-              return request(app)
-                .post('/api/articles/1/comments')
-                .send({})
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('bad request');
-                });
-            });
-            it('Status:400 -  with message bad request if incomplete body', () => {
-              return request(app)
-                .post('/api/articles/1/comments')
-                .send({ username: 'rogersop' })
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('bad request');
-                });
-            });
-            it('Status:422 -  with message unprocessable entity if passed non existent username', () => {
-              return request(app)
-                .post('/api/articles/1/comments')
-                .send({ username: 123, body: 'a comment' })
-                .expect(422)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('unprocessable entity');
-                });
-            });
-            it('Status:400 -  with message bad request if passed additional properties on body', () => {
-              return request(app)
-                .post('/api/articles/1/comments')
-                .send({
-                  username: 'rogersop',
-                  body: 'a comment',
-                  extraKey: 'not allowed'
-                })
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal('bad request');
-                });
-            });
+          it('Status:400 - with message bad request if passed an invalid id', () => {
+            return request(app)
+              .post('/api/articles/not_an_ID/comments')
+              .send({
+                username: 'rogersop',
+                body: 'a comment'
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:400 -  with message bad request if no body', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({})
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:400 -  with message bad request if incomplete body', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({ username: 'rogersop' })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:422 -  with message unprocessable entity if passed non existent username', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({ username: 123, body: 'a comment' })
+              .expect(422)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('unprocessable entity');
+              });
+          });
+          it('Status:400 -  with message bad request if passed additional properties on body', () => {
+            return request(app)
+              .post('/api/articles/1/comments')
+              .send({
+                username: 'rogersop',
+                body: 'a comment',
+                extraKey: 'not allowed'
+              })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
         })
+        describe('GET', () => {
+          it('Status:200 - responds with an array of comments', () => {
+            return request(app)
+              .get('/api/articles/9/comments')
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.an('array');
+                expect(comments).to.have.lengthOf(2);
+              });
+          });
+          it('Status:200 - comment objects contain correct keys', () => {
+            return request(app)
+              .get('/api/articles/9/comments')
+              .expect(200)
+              .then(({body:{comments}}) => {
+                comments.forEach(comment => {
+                expect(comment).to.have.keys(
+                  'comment_id',
+                  'votes',
+                  'created_at',
+                  'author',
+                  'body'
+                );
+              })
+            })
+          })
+          it('Status:200 - Default sort criteria is created_at and order descending', () => {
+            return request(app)
+              .get('/api/articles/1/comments')
+              .expect(200)
+              .then(({body:{comments}}) => {
+              expect(comments).to.be.descendingBy('created_at')
+            })
+          })
+          it('Status:200 - sorts by given column if given a query', () => {
+            return request(app)
+              .get('/api/articles/1/comments?sort_by=votes')
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.descendingBy('votes');
+              });
+          });
+          it('Status:200 - sorts by ascending order if added as query', () => {
+            return request(app)
+              .get('/api/articles/1/comments?order=asc')
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.ascendingBy('created_at');
+              });
+          });
+          it('Status:200 - returns an empty array for valid article with no comments', () => {
+            return request(app)
+              .get('/api/articles/2/comments')
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.an('array');
+                expect(comments).to.have.lengthOf(0);
+              });
+          })
+          it('Status:400 when passed invalid sort_by query', () => {
+            return request(app)
+              .get('/api/articles/1/comments?sort_by=bananas')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:400 - with message bad request if passed an invalid id', () => {
+            return request(app)
+              .get('/api/articles/not_an_ID/comments')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:404 - message article not found for valid but non-existent article_id', () => {
+            return request(app)
+              .get('/api/articles/99/comments')
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('article not found');
+              });
+          })
+
+          //KNEX IGNORES INVALID DIRECTION? - ADD IF STATEMENT TO CONNTROLLER?
+          // it('Status:400 when passed invalid order query', () => {
+          //   return request(app)
+          //     .get('/api/articles/1/comments?order=bananas')
+          //     .expect(400)
+          //     .then(({ body: { msg } }) => {
+          //       expect(msg).to.equal('bad request');
+          //     });
+          // });
+        })
+        //INVALID METHODS - PUT, PATCH, DELETE
       });
     })
   })
