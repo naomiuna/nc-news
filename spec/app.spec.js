@@ -232,7 +232,7 @@ describe('/api', () => {
         });
       });
       describe('/comments', () => {
-        describe.only('POST', () => {
+        describe('POST', () => {
           it('Status:201 - creates and returns new comment with correct keys', () => {
             return request(app)
               .post('/api/articles/1/comments')
@@ -267,6 +267,70 @@ describe('/api', () => {
                 );
               });
           })
+          it('Status:422 - message unprocessable entity for valid but non-existent article_id', () => {
+            return request(app)
+              .post('/api/articles/99/comments')
+              .send({
+                username: 'rogersop',
+                body: 'a comment'
+              })
+              .expect(422)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('unprocessable entity');
+              });
+          });
+            it('Status:400 - with message bad request if passed an invalid id', () => {
+              return request(app)
+                .post('/api/articles/not_an_ID/comments')
+                .send({
+                  username: 'rogersop',
+                  body: 'a comment'
+                })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('Status:400 -  with message bad request if no body', () => {
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send({})
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('Status:400 -  with message bad request if incomplete body', () => {
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send({ username: 'rogersop' })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
+            it('Status:422 -  with message unprocessable entity if passed non existent username', () => {
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send({ username: 123, body: 'a comment' })
+                .expect(422)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('unprocessable entity');
+                });
+            });
+            it('Status:400 -  with message bad request if passed additional properties on body', () => {
+              return request(app)
+                .post('/api/articles/1/comments')
+                .send({
+                  username: 'rogersop',
+                  body: 'a comment',
+                  extraKey: 'not allowed'
+                })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal('bad request');
+                });
+            });
         })
       });
     })
