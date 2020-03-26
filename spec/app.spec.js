@@ -22,6 +22,13 @@ describe('/api', () => {
         expect(result.body).to.eql({ msg: 'path not found' });
       });
   });
+  describe('GET', () => {
+    it('Status:200 - respnds with endpoints JSON', () => {
+      return request(app)
+        .get('/api')
+      .expect(200)
+    })
+  })
   describe('/topics', () => {
     describe('GET', () => {
       it('Status:200 - respnds with an array of topics', () => {
@@ -693,7 +700,7 @@ describe('/api', () => {
       })
       describe('INVALID METHODS', () => {
         it('Status:405 for an invalid method', () => {
-          const methods = ['post', 'put', 'post'];
+          const methods = ['post', 'put', 'get'];
           const promises = methods.map(method => {
             return request(app)
               [method]('/api/comments/:comment_id')
@@ -707,4 +714,18 @@ describe('/api', () => {
       });
     })
   })
+  describe('INVALID METHODS', () => {
+    it('Status:405 for an invalid method', () => {
+      const methods = ['post', 'put', 'patch', 'delete'];
+      const promises = methods.map(method => {
+        return request(app)
+          [method]('/api')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('method not allowed');
+          });
+      });
+      return Promise.all(promises);
+    });
+  });
 })
