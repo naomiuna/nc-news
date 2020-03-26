@@ -178,6 +178,15 @@ describe('/api', () => {
               expect(article.votes).to.equal(95);
             });
         });
+        it('Status:200 -  returns an unchanged article if no inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({})
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article.votes).to.equal(100);
+            });
+        });
         it('Status:404 - message article not found for valid but non-existent article_id', () => {
           return request(app)
             .patch('/api/articles/99')
@@ -191,15 +200,6 @@ describe('/api', () => {
           return request(app)
             .patch('/api/articles/not_an_ID')
             .send({ inc_votes: -5 })
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal('bad request');
-            });
-        });
-        it('Status:400 -  with message bad request if no inc_votes property on body', () => {
-          return request(app)
-            .patch('/api/articles/9')
-            .send({})
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('bad request');
@@ -622,6 +622,15 @@ describe('/api', () => {
               expect(comment.votes).to.equal(11);
             });
         });
+        it('Status:200 -  returns an unchanged comment if no inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({})
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal(16);
+            });
+        });
         it('Status:404 - message comment not found for valid but non-existent comment_id', () => {
           return request(app)
             .patch('/api/comments/99')
@@ -635,15 +644,6 @@ describe('/api', () => {
           return request(app)
             .patch('/api/comments/not_an_ID')
             .send({ inc_votes: -5 })
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal('bad request');
-            });
-        });
-        it('Status:400 -  with message bad request if no inc_votes property on body', () => {
-          return request(app)
-            .patch('/api/comments/2')
-            .send({})
             .expect(400)
             .then(({ body: { msg } }) => {
               expect(msg).to.equal('bad request');

@@ -27,7 +27,7 @@ exports.fetchComments = (article_id, query) => {
 exports.updateCommentById = (comment_id, votes) => {
   return connection('comments')
     .where({ comment_id })
-    .increment({ votes })
+    .increment('votes', votes || 0)
     .returning('*')
     .then(([comment]) => {
       if (!comment) {

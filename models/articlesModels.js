@@ -23,7 +23,7 @@ exports.fetchArticleById = article_id => {
 exports.updateArticleById = (article_id, votes) => {
   return connection('articles')
     .where({ article_id })
-    .increment({ votes })
+    .increment('votes', votes || 0)
     .returning('*')
     .then(([article]) => {
       if (!article) {
