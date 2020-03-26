@@ -25,10 +25,10 @@ exports.patchArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-  const promiseArr = [fetchArticles(req.query)]
-  if(req.query.author) promiseArr.push(fetchUserByUsername(req.query.author))
-  if(req.query.topic) promiseArr.push(fetchSingleTopic(req.query.topic))
-  return Promise.all(promiseArr)
+  const queries = [fetchArticles(req.query)]
+  if(req.query.author) queries.push(fetchUserByUsername(req.query.author))
+  if(req.query.topic) queries.push(fetchSingleTopic(req.query.topic))
+  return Promise.all(queries)
     .then(([articles]) => {
     res.status(200).send({articles})
     })
