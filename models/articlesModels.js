@@ -1,7 +1,7 @@
 const connection = require('../db/connection');
-const {fetchUserByUsername} = require('../models/usersModels')
+const { fetchUserByUsername } = require('../models/usersModels');
 
-exports.fetchArticleById = (article_id) => {
+exports.fetchArticleById = article_id => {
   return connection
     .select('articles.*')
     .from('articles')
@@ -13,37 +13,37 @@ exports.fetchArticleById = (article_id) => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg:'article not found'
-        })
+          msg: 'article not found'
+        });
       }
       return article;
-  })
-}
+    });
+};
 
 exports.updateArticleById = (article_id, votes) => {
   return connection('articles')
-    .where({article_id})
-    .increment({votes})
+    .where({ article_id })
+    .increment({ votes })
     .returning('*')
     .then(([article]) => {
       if (!article) {
         return Promise.reject({
           status: 404,
           msg: 'article not found'
-        })
+        });
       }
       return article;
-    })
-}
+    });
+};
 
-exports.fetchArticles = (query) => {
+exports.fetchArticles = query => {
   const { sort_by, order, author, topic } = query;
-  const orders = [undefined, 'asc', 'desc']
+  const orders = [undefined, 'asc', 'desc'];
   if (!orders.includes(order)) {
     return Promise.reject({
       status: 400,
       msg: 'bad request'
-    })
+    });
   }
   return connection
     .select('articles.*')
@@ -57,7 +57,7 @@ exports.fetchArticles = (query) => {
         result.where('articles.author', author);
       }
       if (topic) {
-        result.where('articles.topic', topic)
+        result.where('articles.topic', topic);
       }
     });
-}
+};

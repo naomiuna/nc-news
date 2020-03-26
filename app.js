@@ -1,7 +1,13 @@
 const express = require('express');
 const app = express();
 const apiRouter = require('./routes/apiRouter');
-const {handleBadPaths, handleCustomErrors, handle400s, handle422s, handle500s} = require('./errors')
+const {
+  handleBadPaths,
+  handleCustomErrors,
+  handle400s,
+  handle422s,
+  handle500s
+} = require('./errors');
 app.use(express.json());
 
 app.use('/api', apiRouter);

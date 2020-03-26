@@ -5,8 +5,8 @@ exports.createComment = (article_id, author, body) => {
     .insert({ article_id, author, body })
     .into('comments')
     .returning('*')
-  .then(([comment])=> comment)
-}
+    .then(([comment]) => comment);
+};
 
 exports.fetchComments = (article_id, query) => {
   const { sort_by, order } = query;
@@ -18,17 +18,11 @@ exports.fetchComments = (article_id, query) => {
     });
   }
   return connection
-    .select(
-      'comment_id',
-      'votes',
-      'created_at',
-      'author',
-      'body'
-    )
-  .from('comments')
+    .select('comment_id', 'votes', 'created_at', 'author', 'body')
+    .from('comments')
     .where({ article_id })
-  .orderBy((sort_by || 'created_at'), (order || 'desc'))
-}
+    .orderBy(sort_by || 'created_at', order || 'desc');
+};
 
 exports.updateCommentById = (comment_id, votes) => {
   return connection('comments')
@@ -40,11 +34,11 @@ exports.updateCommentById = (comment_id, votes) => {
         return Promise.reject({
           status: 404,
           msg: 'comment not found'
-      })
+        });
       }
-      return comment
-  })
-}
+      return comment;
+    });
+};
 
 exports.removeCommentById = comment_id => {
   return connection('comments')
@@ -55,7 +49,7 @@ exports.removeCommentById = comment_id => {
         return Promise.reject({
           status: 404,
           msg: 'comment not found'
-      })
-    }
-  })
-}
+        });
+      }
+    });
+};

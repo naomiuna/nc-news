@@ -1,20 +1,30 @@
 const articlesRouter = require('express').Router();
-const { getArticleById, patchArticleById, getArticles } = require('../controllers/articlesControllers')
-const {postComment, getComments} = require('../controllers/commentsControllers')
-const {handle405s} = require('../errors')
+const {
+  getArticleById,
+  patchArticleById,
+  getArticles
+} = require('../controllers/articlesControllers');
+const {
+  postComment,
+  getComments
+} = require('../controllers/commentsControllers');
+const { handle405s } = require('../errors');
 
-articlesRouter.route('/:article_id')
+articlesRouter
+  .route('/:article_id')
   .get(getArticleById)
   .patch(patchArticleById)
-  .all(handle405s)
+  .all(handle405s);
 
-articlesRouter.route('/:article_id/comments')
+articlesRouter
+  .route('/:article_id/comments')
   .post(postComment)
   .get(getComments)
-  .all(handle405s)
+  .all(handle405s);
 
-articlesRouter.route('/')
+articlesRouter
+  .route('/')
   .get(getArticles)
-  .all(handle405s)
+  .all(handle405s);
 
 module.exports = articlesRouter;

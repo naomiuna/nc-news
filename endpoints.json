@@ -6,7 +6,7 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football","description": "Footie!" }]
+      "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/users/:username": {
@@ -39,7 +39,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "serves an updated article object for corresponding article_id",
     "queries": [],
-    "request-body-form": {"inc_votes": 5},
+    "request-body-form": { "inc_votes": 5 },
     "exampleResponse": {
       "article": {
         "article_id": 3,
@@ -56,9 +56,9 @@
   "POST /api/articles/:article_id/comments": {
     "description": "serves a posted comment",
     "queries": [],
-    "request-body-form" : {"username": "username", "body": "body"},
+    "request-body-form": { "username": "username", "body": "body" },
     "exampleResponse": {
-      "comment": { 
+      "comment": {
         "comment_id": 19,
         "author": "username",
         "article_id": 1,
@@ -111,7 +111,7 @@
   "PATCH /api/comments/:comment_id": {
     "description": "serves an updated comment object for corresponding comment_id",
     "queries": [],
-    "request-body-form": {"inc_votes": 5},
+    "request-body-form": { "inc_votes": 5 },
     "exampleResponse": {
       "article": {
         "comment_id": 1,

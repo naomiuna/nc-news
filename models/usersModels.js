@@ -1,6 +1,6 @@
 const connection = require('../db/connection');
 
-exports.fetchUserByUsername = (username) => {
+exports.fetchUserByUsername = username => {
   return connection
     .select('*')
     .from('users')
@@ -10,8 +10,8 @@ exports.fetchUserByUsername = (username) => {
         return Promise.reject({
           status: 404,
           msg: 'username not found'
-      })
+        });
       }
       return user;
-  })
-}
+    });
+};
