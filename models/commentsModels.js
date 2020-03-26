@@ -29,3 +29,19 @@ exports.fetchComments = (article_id, query) => {
     .where({ article_id })
   .orderBy((sort_by || 'created_at'), (order || 'desc'))
 }
+
+exports.updateCommentById = (comment_id, votes) => {
+  return connection('comments')
+    .where({ comment_id })
+    .increment({ votes })
+    .returning('*')
+    .then(([comment]) => {
+      if (!comment) {
+        return Promise.reject({
+          status: 404,
+          msg: 'comment not found'
+      })
+      }
+      return comment
+  })
+}

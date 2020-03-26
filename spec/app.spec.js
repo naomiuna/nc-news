@@ -592,4 +592,73 @@ describe('/api', () => {
       });
     });
   })
+  describe('/comments', () => {
+    describe('/:comment_id', () => {
+      describe('PATCH', () => {
+        it('Status:200 - updates and returns article for given id - positive numbers', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 5 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal(21);
+            });
+        });
+        it('Status:200 - updates and returns article for given id - negative numbers', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: -5 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal(11);
+            });
+        });
+        it('Status:404 - message comment not found for valid but non-existent comment_id', () => {
+          return request(app)
+            .patch('/api/comments/99')
+            .send({ inc_votes: -5 })
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('comment not found');
+            });
+        });
+        it('Status:400 - with message bad request if passed an invalid id', () => {
+          return request(app)
+            .patch('/api/comments/not_an_ID')
+            .send({ inc_votes: -5 })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('Status:400 -  with message bad request if no inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/comments/2')
+            .send({})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('Status:400 -  with message bad request if invalid inc_votes property on body', () => {
+          return request(app)
+            .patch('/api/comments/2')
+            .send({ inc_votes: 'cat' })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+        it('Status:400 -  with message bad request if passed additional properties on body', () => {
+          return request(app)
+            .patch('/api/comments/2')
+            .send({ inc_votes: 5, name: 'naomi' })
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('bad request');
+            });
+        });
+      })
+    })
+  })
 })

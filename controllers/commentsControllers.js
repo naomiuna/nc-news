@@ -1,4 +1,4 @@
-const { createComment, fetchComments } = require('../models/commentsModels')
+const { createComment, fetchComments, updateCommentById } = require('../models/commentsModels')
 const {fetchArticleById} = require('../models/articlesModels')
 
 exports.postComment = (req, res, next) => {
@@ -21,6 +21,19 @@ exports.getComments = (req, res, next) => {
   return Promise.all([fetchComments(article_id, req.query), fetchArticleById(article_id)])
     .then(([comments]) => {
       res.status(200).send({ comments })
+    })
+    .catch(next);
+}
+
+exports.patchCommentById = (req, res, next) => {
+  if (Object.keys(req.body).length > 1) {
+    return next({ status: 400, msg: 'bad request' });
+  }
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+  updateCommentById(comment_id, inc_votes)
+    .then(comment => {
+      res.status(200).send({ comment });
     })
     .catch(next);
 }
