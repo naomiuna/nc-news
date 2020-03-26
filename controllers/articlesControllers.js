@@ -1,4 +1,6 @@
-const { fetchArticleById, updateArticleById, fetchArticles} = require('../models/articlesModels')
+const { fetchArticleById, updateArticleById, fetchArticles } = require('../models/articlesModels')
+const { fetchUserByUsername } = require('../models/usersModels')
+const {fetchSingleTopic} = require('../models/topicsModels')
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -23,8 +25,11 @@ exports.patchArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles(req.query)
-    .then(articles => {
+  const promiseArr = [fetchArticles(req.query)]
+  if(req.query.author) promiseArr.push(fetchUserByUsername(req.query.author))
+  if(req.query.topic) promiseArr.push(fetchSingleTopic(req.query.topic))
+  return Promise.all(promiseArr)
+    .then(([articles]) => {
     res.status(200).send({articles})
     })
   .catch(next)

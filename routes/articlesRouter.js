@@ -15,5 +15,6 @@ articlesRouter.route('/:article_id/comments')
 
 articlesRouter.route('/')
   .get(getArticles)
+  .all(handle405s)
 
 module.exports = articlesRouter;

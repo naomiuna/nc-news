@@ -18,8 +18,8 @@ exports.postComment = (req, res, next) => {
 exports.getComments = (req, res, next) => {
   const { article_id } = req.params;
   
-  return Promise.all([fetchArticleById(article_id), fetchComments(article_id, req.query)])
-    .then(([, comments]) => {
+  return Promise.all([fetchComments(article_id, req.query), fetchArticleById(article_id)])
+    .then(([comments]) => {
       res.status(200).send({ comments })
     })
     .catch(next);

@@ -1,4 +1,5 @@
 const connection = require('../db/connection');
+const {fetchUserByUsername} = require('../models/usersModels')
 
 exports.fetchArticleById = (article_id) => {
   return connection
@@ -37,6 +38,13 @@ exports.updateArticleById = (article_id, votes) => {
 
 exports.fetchArticles = (query) => {
   const { sort_by, order, author, topic } = query;
+  const orders = [undefined, 'asc', 'desc']
+  if (!orders.includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: 'bad request'
+    })
+  }
   return connection
     .select('articles.*')
     .from('articles')

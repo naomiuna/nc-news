@@ -394,9 +394,17 @@ describe('/api', () => {
                 expect(comments).to.have.lengthOf(0);
               });
           })
-          it('Status:400 when passed invalid sort_by query', () => {
+          it('Status:400 with message bad request when passed invalid sort_by query', () => {
             return request(app)
               .get('/api/articles/1/comments?sort_by=bananas')
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('bad request');
+              });
+          });
+          it('Status:400 with message bad request when passed invalid order query', () => {
+            return request(app)
+              .get('/api/articles/1/comments?order=bananas')
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal('bad request');
@@ -435,7 +443,7 @@ describe('/api', () => {
         });
       });
     })
-    describe.only('GET', () => {
+    describe('GET', () => {
       it('Status:200 - returns an array of articles', () => {
         
         return request(app)
@@ -500,10 +508,20 @@ describe('/api', () => {
           .get('/api/articles?author=icellusedkars')
           .expect(200)
           .then(({ body: { articles } }) => {
+            expect(articles).to.be.an('array');
             expect(articles).to.have.lengthOf(6);
             articles.forEach(article => {
               expect(article.author).to.equal('icellusedkars');
             });
+          });
+      });
+      it('Status:200: returns an empty array of articles if passed a valid author with no articles', () => {
+        return request(app)
+          .get('/api/articles?author=lurker')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an('array');
+            expect(articles).to.have.lengthOf(0);
           });
       });
       it('Status:200: returns only relevant articles if passed a topic query', () => {
@@ -517,7 +535,61 @@ describe('/api', () => {
             });
           });
       });
+      it('Status:200: returns an empty array of articles if passed a valid topic with no articles', () => {
+        return request(app)
+          .get('/api/articles?topic=paper')
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an('array');
+            expect(articles).to.have.lengthOf(0);
+          });
+      });
+      it('Status:400 when passed invalid sort_by query', () => {
+        return request(app)
+          .get('/api/articles?order=bananas')
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('bad request');
+          });
+      });
+      it('Status:400 when passed invalid order query', () => {
+        return request(app)
+          .get('/api/articles?sort_by=bananas')
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('bad request');
+          });
+      });
+      it('Status:404 when passed a non existent author', () => {
+        return request(app)
+          .get('/api/articles?author=naomi')
+          .expect(404)
+          .then(({body:{msg}}) => {
+          expect(msg).to.equal('username not found');
+        })
+      })
+      it('Status:404 when passed a non existent topic', () => {
+        return request(app)
+          .get('/api/articles?topic=dogs')
+          .expect(404)
+          .then(({body:{msg}}) => {
+          expect(msg).to.equal('topic not found');
+        })
+      })
     })
-    //INVALID METHODS - PUT,PATCH,POST,DELETE
+    describe('INVALID METHODS', () => {
+      it('Status:405 for an invalid method', () => {
+        const methods = ['patch', 'put', 'delete', 'post'];
+        const promises = methods.map(method => {
+          return request(app)
+            [method]('/api/articles')
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal('method not allowed');
+            });
+        });
+        return Promise.all(promises);
+      });
+    });
   })
 })

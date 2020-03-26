@@ -1,9 +1,9 @@
 const usersRouter = require('express').Router();
-const { getUserById } = require('../controllers/usersControllers');
+const { getUserByUsername } = require('../controllers/usersControllers');
 const {handle405s} = require('../errors')
 
 usersRouter.route('/:username')
-  .get(getUserById)
+  .get(getUserByUsername)
 .all(handle405s)
 
 module.exports = usersRouter;
