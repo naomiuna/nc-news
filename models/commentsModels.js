@@ -45,3 +45,17 @@ exports.updateCommentById = (comment_id, votes) => {
       return comment
   })
 }
+
+exports.removeCommentById = comment_id => {
+  return connection('comments')
+    .where(comment_id)
+    .del()
+    .then(deleteCount => {
+      if (deleteCount === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: 'comment not found'
+      })
+    }
+  })
+}

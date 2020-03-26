@@ -659,6 +659,52 @@ describe('/api', () => {
             });
         });
       })
+      describe('DELETE', () => {
+        it('Status:204 - no content on successful deletion', () => {
+          return request(app)
+            .delete('/api/comments/1')
+            .expect(204)
+            .then(() => {
+              return request(app)
+              .get('/api/articles/9/comments')
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.be.an('array');
+                expect(comments).to.have.lengthOf(1);
+              });
+          })
+        })
+        it('Status:404 - with message comment not found for valid but non existent comment_id', ()=> {
+          return request(app)
+            .delete('/api/comments/99')
+            .expect(404)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('comment not found')
+          })
+        })
+        it('Status:404 - with message bad request for invalid comment_id', ()=> {
+          return request(app)
+            .delete('/api/comments/invalid_ID')
+            .expect(400)
+            .then(({body:{msg}}) => {
+            expect(msg).to.equal('bad request')
+          })
+        })
+      })
+      describe('INVALID METHODS', () => {
+        it('Status:405 for an invalid method', () => {
+          const methods = ['post', 'put', 'post'];
+          const promises = methods.map(method => {
+            return request(app)
+              [method]('/api/comments/:comment_id')
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal('method not allowed');
+              });
+          });
+          return Promise.all(promises);
+        });
+      });
     })
   })
 })
