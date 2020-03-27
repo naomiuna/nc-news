@@ -98,7 +98,7 @@ GET /api
 
 ## Deployment
 
-This application was deployed using heroku. Please see the heroku [getting started guide](https://devcenter.heroku.com/start) for instructions on how to deploy your version of the nc-news application onto the web.
+This application was deployed using heroku. Please see the heroku [getting started guide](https://devcenter.heroku.com/start) for instructions on how to deploy your version of the nc-news application.
 
 ## Author
 
