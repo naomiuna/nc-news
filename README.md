@@ -1,6 +1,6 @@
 # nc-news - backend API project
 
-Backend RESTful API - a database containing articles, comments, topics and users.
+Backend RESTful API - database containing articles, comments, topics and users.
 
 Frontend project creating a reddit-style news site to follow.
 
@@ -20,13 +20,13 @@ git clone https://github.com/naomiuna/nc-news
 cd nc-news
 ```
 
-Install the dependencies:
+Install the dependencies (detail below):
 
 ```
 npm i
 ```
 
-Set up the development and test databases :
+Set up the development and test databases:
 
 ```
 npm run setup-dbs
@@ -38,17 +38,15 @@ Seed the development database:
 npm run seed
 ```
 
-Run the app. It will run on http://localhost:9090
+Run the app on port 9090.
 
 ```
 npm start
 ```
 
-To view all of the available endpoints in JSON format, make a GET /api request.
-
 ## Testing
 
-To run tests on the endpoints, type the following in your terminal:
+To run tests on the endpoints:
 
 ```
 npm test
@@ -62,6 +60,7 @@ npm test-utils
 
 ## API endpoints
 
+To view all of the available endpoints in JSON format with examples, make a GET /api request.
 The following endpoints are available:
 
 ```http
@@ -83,22 +82,24 @@ DELETE /api/comments/:comment_id
 GET /api
 ```
 
-
 ### Built With
 
-* [Node.js](https://nodejs.org/en/) - JavaScript runtime environment
-* [Express.js](https://expressjs.com/) - web application framework
-* [Knex.js](https://knexjs.org/) - SQL query builder
-* [PostgreSQL](https://www.postgresql.org/) - relational database management
-* [Insomnia](https://insomnia.rest/) - can be used to make requests to the server
+* [Node.js](https://nodejs.org/en/) v12.16.1 - JavaScript runtime environment
+* [Express.js](https://expressjs.com/) v4.17.1 - web application framework
+* [Knex.js](https://knexjs.org/) v0.20.13 - SQL query builder
+* [PostgreSQL](https://www.postgresql.org/) v7.18.2 - relational database management
 
 **Testing**
-* [Mocha](https://mochajs.org/) - test framework
-* [Chai](https://www.chaijs.com/) - test assertion library
-* [Chai Sorted](https://www.npmjs.com/package/chai-sorted). - chai plugin
-* [Nodemon](https://nodemon.io/) - utility to restart server
-* [Supertest](https://www.npmjs.com/package/supertest) - test assertion library
+* [Mocha](https://mochajs.org/) v7.1.1 - test framework
+* [Chai](https://www.chaijs.com/) v4.2.0 - test assertion library
+* [Chai Sorted](https://www.npmjs.com/package/chai-sorted) v0.2.0 - chai plugin
+* [Nodemon](https://nodemon.io/) v2.0.2 - utility to restart server
+* [Supertest](https://www.npmjs.com/package/supertest) v4.0.2 - test assertion library
+
+## Deployment
+
+This application was deployed using heroku. Please see the heroku [getting started guide](https://devcenter.heroku.com/start) for instructions on how to deploy your version of the nc-news application onto the web.
 
 ## Author
 
-* **Naomi Todd** - [naomiuna](https://github.com/naomiuna)
+* **[Naomi Todd]**(https://github.com/naomiuna)
