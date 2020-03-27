@@ -1,6 +1,7 @@
 # nc-news - backend API project
 
-Backend RESTful API. 
+Backend RESTful API - a database containing articles, comments, topics and users.
+
 Frontend project creating a reddit-style news site to follow.
 
 **Hosted on Heroku at https://nt-nc-news.herokuapp.com/api**
