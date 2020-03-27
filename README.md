@@ -102,4 +102,4 @@ This application was deployed using heroku. Please see the heroku [getting start
 
 ## Author
 
-* **[Naomi Todd]**(https://github.com/naomiuna)
+* **[Naomi Todd](https://github.com/naomiuna)**
