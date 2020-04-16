@@ -2,7 +2,7 @@
 
 Backend RESTful API - database containing articles, comments, topics and users.
 
-Frontend project creating a reddit-style news site[here](https://github.com/naomiuna/fe-nc-news).
+Frontend project creating a reddit-style news site [here](https://github.com/naomiuna/fe-nc-news).
 
 **[*Hosted on Heroku here*](https://nt-nc-news.herokuapp.com/api)**
 
